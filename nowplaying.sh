@@ -5,16 +5,11 @@
 #####################################
 
 # --- Configuration ---
-art_file="$HOME/.config/music-background/album_art.jpg"
-fallback_art_file="$HOME/.config/music-background/fallback_album_art.jpg"
-cache_file="$HOME/.config/music-background/song_title.cache"
+art_file="./albumart.jpg"
+fallback_art_file="./albumartfallback.jpg"
+cache_file="./song_title.cache"
 
-# --- Functions ---
 
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 --title | --arturl | --artist | --position | --length | --album | --source"
-    exit 1
-fi
 # Determine active player
 
 players_list=$(playerctl -l 2>/dev/null)
@@ -58,13 +53,6 @@ get_metadata() {
     playerctl -p "$active_player" metadata --format "{{ $key }}" 2>/dev/null
 }
 
-# play-pause toggle
-if [[ "$1" == "--toggle" ]]; then
-    if [[ -n "$active_player" ]]; then
-        playerctl -p "$active_player" play-pause    
-    fi
-    exit 0
-fi
 
 # Art clean up if no valid player found for clean look on hyprlock screen.
 if [[ -z "$active_player" ]]; then
@@ -124,82 +112,4 @@ if [[ -n "$active_player" ]]; then
         fi
     fi
 fi
-
 # Print Output 
-
-# Parse the argument
-case "$1" in
---title)
-    title="$song_title"
-    if [ -z "$title" ]; then
-        echo ""
-    else
-        echo "${title:0:15}..." # Limit the output to 50 characters
-    fi
-    ;;
---artist)
-    artist="$song_artist"
-    if [ -z "$artist" ]; then
-        echo ""
-    else
-        echo "${artist:0:20}" #mit the output to 50 characters
-    fi
-    ;;
---position)
-    position=$(playerctl position 2>/dev/null)
-    length=$(get_metadata "mpris:length")
-    if [ -z "$position" ] || [ -z "$length" ]; then
-        echo ""
-    else
-        position_formatted=$(convert_position "$position")
-        length_formatted=$(convert_length "$length")
-        echo "$position_formatted/$length_formatted"
-    fi
-    ;;
---length)
-    length=$(get_metadata "mpris:length")
-    if [ -z "$length" ]; then
-        echo ""
-    else
-        convert_length "$length"
-    fi
-    ;;
---status)
-    status=$(playerctl status 2>/dev/null)
-    if [[ $status == "Playing" ]]; then
-        echo "⏸"
-    elif [[ $status == "Paused" ]]; then
-        echo "▶"
-    else
-        echo ""
-    fi
-    ;;
---album)
-    album=$(playerctl - "$active_player" metadata --format "{{ xesam:album }}" 2>/dev/null)
-    if [[ -n $album ]]; then
-        echo "$album"
-    else
-        status=$(playerctl status 2>/dev/null)
-        if [[ -n $status ]]; then
-            echo "Not album"
-        else
-            echo ""
-        fi
-    fi
-    ;;
---source)
-    trackid="$player_display_name"
-    if [[ "$trackid" == *"spotify"* ]]; then
-        echo -e "Spotify "
-    elif [[ "$trackid" == *"Chromium"* ]]; then 
-        echo "Tidal"
-    else
-        echo "$trackid"
-    fi
-    ;;
-*)
-    echo "Invalid option: $1"
-    echo "Usage: $0 --title | --arturl | --artist | --position | --length | --album | --source"
-    exit 1
-    ;;
-esac

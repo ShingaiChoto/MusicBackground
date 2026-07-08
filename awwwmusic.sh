@@ -10,7 +10,7 @@ while true; do
   ./nowplaying.sh
   sleep 1 
 if [ -f ./albumart.jpg ]; then
-  awww img --transition-type="none" --resize="$RESIZE_TYPE" "./albumart.jpg"
+  awww img --transition-type="none" --resize="$RESIZE_TYPE" "./albumartfinal.jpg"
 else
   awww img --transition-type="none" --resize="$RESIZE_TYPE" "./albumartfallback.jpg"
 fi

@@ -6,6 +6,8 @@
 
 # --- Configuration ---
 art_file="./albumart.jpg"
+art_file_blurred="./albumartblurred.jpg"
+art_file_final="./albumartfinal.jpg"
 fallback_art_file="./albumartfallback.jpg"
 cache_file="./song_title.cache"
 
@@ -112,4 +114,11 @@ if [[ -n "$active_player" ]]; then
         fi
     fi
 fi
+    magick "$art_file" -blur 200x7 -resize 1920x^ -gravity center -extent 1920x1080 "$art_file_blurred"
+ magick -size 640x640 xc:black -fill white -draw "roundRectangle 8,8,632,632 32,33" generatedcardmask.png  
+magick "$art_file" generatedcardmask.png -alpha Off -compose CopyOpacity -composite -colorspace RGB test.png
+magick test.png -alpha extract -blur 0x10 -alpha off mask.png
+magick "$art_file" mask.png -alpha Off -compose CopyOpacity -composite -colorspace RGB test.png
+ # magick xc:none -draw "roundrectangle 0,0,100,100,15,15" "$art_file"
+magick composite -gravity west test.png "$art_file_blurred" "$art_file_final"
 # Print Output 

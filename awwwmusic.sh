@@ -8,10 +8,10 @@ RESIZE_TYPE="fit"
 
 while true; do
   ./nowplaying.sh
-  sleep 1 
+  sleep 0.5
 if [ -f ./albumart.jpg ]; then
-  awww img --transition-type="none" --resize="$RESIZE_TYPE" "./albumartfinal.jpg"
+  awww img --transition-type="fade" --resize="$RESIZE_TYPE" --transition-duration="0.5" --transition-step="90" "./albumartfinal.jpg"
 else
-  awww img --transition-type="none" --resize="$RESIZE_TYPE" "./albumartfallback.jpg"
+  awww img --transition-type="fade" --resize="$RESIZE_TYPE" --transition-duration="0.5" --transition-step="2" "./albumartfallback.jpg"
 fi
 done
